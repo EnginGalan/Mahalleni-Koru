@@ -15,6 +15,7 @@ public class keles : MonoBehaviour
     [Header("Sesler")]
     public AudioSource AtesSesi;
     public AudioSource SarjorSesi;
+    public AudioSource MermiBitisSesi;
     [Header("Efektler")]
     public ParticleSystem AtesEfekt;
     public ParticleSystem mermiIzi;
@@ -28,27 +29,57 @@ public class keles : MonoBehaviour
     public TextMeshProUGUI toplamMermi_Text;
     public TextMeshProUGUI kalanMermi_Text;
 
+    public bool kovanCiksinMi;
+    public GameObject kovanCikisNoktasi;
+    public GameObject kovanObjesi;  
     void Start()
     {
-        toplamMermi_Text.text = toplamMermiSayisi.ToString();
-        kalanMermi_Text.text = kalanMermi.ToString();
+        kalanMermi = SarjorKapasitesi;
+
+        SarjorDoldurmaTeknikFonksiyon("NormalYaz");
+
 
         animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
 
-        if (Input.GetKey(KeyCode.Mouse0) && atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi!=0)
+        if (Input.GetKey(KeyCode.Mouse0))
         {
-            AtesEt();
-            İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
+            if (atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi != 0)
+            {
+                AtesEt();
+                İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
+            }
+            if (kalanMermi == 0)
+            {
+                if(!MermiBitisSesi.isPlaying)
+                    MermiBitisSesi.Play();
+            }
         }
 
         if (Input.GetKey(KeyCode.R))
         {
+            StartCoroutine(ReloadYap());
+        }
+    }
+     IEnumerator ReloadYap()
+    {
+        if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
             animator.Play("SarjorDegistirme");
+        yield return new WaitForSeconds(1.8f);
+        if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
+        {
+            if (kalanMermi != 0)
+            {
+                SarjorDoldurmaTeknikFonksiyon("MermiVar");
+            }
+            else
+            {
+                SarjorDoldurmaTeknikFonksiyon("MermiYok");
+            }
+            
         }
     }
 
@@ -60,16 +91,11 @@ public class keles : MonoBehaviour
 
     void AtesEt()
     {
-        kalanMermi--;
-        kalanMermi_Text.text=kalanMermi.ToString();
-
-        animator.Play("AtesEt");
-        AtesSesi.Play();
-        AtesEfekt.Play();
+        AtesEtmeTeknikİslemleri();
 
         RaycastHit hit;
 
-        if (Physics.Raycast(benimCam.transform.position,benimCam.transform.forward, out hit, menzil))
+        if (Physics.Raycast(benimCam.transform.position, benimCam.transform.forward, out hit, menzil))
         {
             if (hit.transform.gameObject.CompareTag("Dusman"))
                 Instantiate(kanEfekti, hit.point, Quaternion.LookRotation(hit.normal));
@@ -82,9 +108,74 @@ public class keles : MonoBehaviour
             else
                 Instantiate(mermiIzi, hit.point, Quaternion.LookRotation(hit.normal));
 
-            Debug.Log(hit.transform.name);            
+            Debug.Log(hit.transform.name);
         }
 
-        
+
+    }
+    void SarjorDoldurmaTeknikFonksiyon(string tur)
+    {
+        switch (tur)
+        {
+            case "MermiVar":
+                if (toplamMermiSayisi <= SarjorKapasitesi)
+                {
+                    int olusanToplamDeger = kalanMermi + toplamMermiSayisi;
+                    if (olusanToplamDeger > SarjorKapasitesi)
+                    {
+                        kalanMermi = SarjorKapasitesi;
+                        toplamMermiSayisi = olusanToplamDeger - SarjorKapasitesi;
+                    }
+                    else
+                    {
+                        kalanMermi += toplamMermiSayisi;
+                        toplamMermiSayisi = 0;
+                    }
+                }
+                else
+                {
+                    toplamMermiSayisi -= SarjorKapasitesi - kalanMermi;
+                    kalanMermi = SarjorKapasitesi;
+                }
+                toplamMermi_Text.text = toplamMermiSayisi.ToString();
+                kalanMermi_Text.text = kalanMermi.ToString();
+                break;
+
+            case "MermiYok":
+                if (toplamMermiSayisi <= SarjorKapasitesi)
+                {
+                    kalanMermi = toplamMermiSayisi;
+                    toplamMermiSayisi = 0;
+                }
+                else
+                {
+                    toplamMermiSayisi -= SarjorKapasitesi;
+                    kalanMermi = SarjorKapasitesi;
+                }
+                toplamMermi_Text.text = toplamMermiSayisi.ToString();
+                kalanMermi_Text.text = kalanMermi.ToString();
+                break;
+
+            case "NormalYaz":
+                toplamMermi_Text.text = toplamMermiSayisi.ToString();
+                kalanMermi_Text.text = kalanMermi.ToString();
+                break;
+        }
+    }
+    void AtesEtmeTeknikİslemleri()
+    {
+        if (kovanCiksinMi)
+        {
+            GameObject obje = Instantiate(kovanObjesi, kovanCikisNoktasi.transform.position, kovanCikisNoktasi.transform.rotation);
+            Rigidbody rb = obje.GetComponent<Rigidbody>();
+            rb.AddRelativeForce(new Vector3(-10f, 1, 0) * 60);
+        }
+
+        kalanMermi--;
+        kalanMermi_Text.text = kalanMermi.ToString();
+
+        animator.Play("AtesEt");
+        AtesSesi.Play();
+        AtesEfekt.Play();
     }
 }

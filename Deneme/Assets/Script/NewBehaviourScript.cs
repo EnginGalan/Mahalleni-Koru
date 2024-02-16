@@ -11,6 +11,7 @@ public class NewBehaviourScript : MonoBehaviour
     public float menzil;
     public AudioSource ses;
     public AudioSource SarjorSesi;
+    public AudioSource MermiBitisSesi;
     public Camera cam;
     public ParticleSystem ps;
     public ParticleSystem mermiIzi;
@@ -24,20 +25,91 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void Start()
     {
+        kalanMermiSayisi = sarjorKapasitesi;
+
         kalanMermiSayisi_Text.text = kalanMermiSayisi.ToString();
         toplamMermiSayisi_Text.text = toplamMermiSayisi.ToString();
         animator = GetComponent<Animator>();
     }
     void Update()
     {
-        if (Input.GetKey(KeyCode.Mouse0) && atesEdilebilirlik && Time.time > icerAtisSikligi&& kalanMermiSayisi!=0)
+        if (Input.GetKey(KeyCode.Mouse0) )
         {
-            atesEt();
-            icerAtisSikligi = Time.time + atisSikligi;
+            if (atesEdilebilirlik && Time.time > icerAtisSikligi && kalanMermiSayisi != 0)
+            {
+                atesEt();
+                icerAtisSikligi = Time.time + atisSikligi;
+            }
+            if(kalanMermiSayisi==0)
+            {
+                if(!MermiBitisSesi.isPlaying)
+                    MermiBitisSesi.Play();
+            }                       
             
         }
         if (Input.GetKey(KeyCode.R))
+        {
+            StartCoroutine(ReloadYap());
+        }
+
+    }
+    IEnumerator ReloadYap()
+    {
+        if(kalanMermiSayisi<sarjorKapasitesi&&toplamMermiSayisi!=0)
             animator.Play("SarjorDegistirme");
+        yield return new WaitForSeconds(1.8f);
+        if(kalanMermiSayisi<sarjorKapasitesi&&toplamMermiSayisi!=0)
+        {
+            if(kalanMermiSayisi!=0)
+            {
+                SarjorDoldurmaTeknikFonksiyon("MermiVar");
+            }
+            else
+            {
+                SarjorDoldurmaTeknikFonksiyon("MermiYok");
+            }
+        }
+    }
+    void SarjorDoldurmaTeknikFonksiyon(string tur)
+    {
+        switch(tur)
+        {
+            case "MermiVar":
+                if (toplamMermiSayisi<=sarjorKapasitesi)
+                {
+                    int olusanToplamDeger = kalanMermiSayisi + toplamMermiSayisi;
+                    if (olusanToplamDeger > sarjorKapasitesi)
+                    {
+                        kalanMermiSayisi = sarjorKapasitesi;
+                        toplamMermiSayisi = olusanToplamDeger - sarjorKapasitesi;
+                    }
+                    else
+                    {
+                        kalanMermiSayisi += toplamMermiSayisi;
+                        toplamMermiSayisi = 0;
+                    }
+                }
+                else
+                {
+                    toplamMermiSayisi -= sarjorKapasitesi - kalanMermiSayisi;
+                    kalanMermiSayisi = sarjorKapasitesi;
+                }
+                toplamMermiSayisi_Text.text = toplamMermiSayisi.ToString();
+                kalanMermiSayisi_Text.text = kalanMermiSayisi.ToString();
+                break;
+            case "MermiYok":
+                if (toplamMermiSayisi <= sarjorKapasitesi)
+                {
+                    kalanMermiSayisi=toplamMermiSayisi;
+                    toplamMermiSayisi = 0;
+                }
+                else
+                {
+                    toplamMermiSayisi -= sarjorKapasitesi;
+                    kalanMermiSayisi = sarjorKapasitesi;
+                }      
+                break;
+        }
     }
 
     void SarjorSesiAktif()
