@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class NewBehaviourScript : MonoBehaviour
@@ -15,13 +16,21 @@ public class NewBehaviourScript : MonoBehaviour
     public ParticleSystem mermiIzi;
     public ParticleSystem kanEfekti;
     Animator animator;
+    public int kalanMermiSayisi;
+    public int toplamMermiSayisi;
+    public int sarjorKapasitesi;
+    TextMeshProUGUI kalanMermiSayisi_Text;
+    TextMeshProUGUI toplamMermiSayisi_Text;
+
     private void Start()
     {
+        kalanMermiSayisi_Text.text = kalanMermiSayisi.ToString();
+        toplamMermiSayisi_Text.text = toplamMermiSayisi.ToString();
         animator = GetComponent<Animator>();
     }
     void Update()
     {
-        if (Input.GetKey(KeyCode.Mouse0) && atesEdilebilirlik && Time.time > icerAtisSikligi)
+        if (Input.GetKey(KeyCode.Mouse0) && atesEdilebilirlik && Time.time > icerAtisSikligi&& kalanMermiSayisi!=0)
         {
             atesEt();
             icerAtisSikligi = Time.time + atisSikligi;
@@ -37,6 +46,8 @@ public class NewBehaviourScript : MonoBehaviour
     }
     void atesEt()
     {
+        kalanMermiSayisi--;
+        kalanMermiSayisi_Text.text = kalanMermiSayisi.ToString();
         animator.Play("AtesEt");
         ses.Play();
         ps.Play();

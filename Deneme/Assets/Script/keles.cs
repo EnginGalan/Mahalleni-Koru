@@ -1,22 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class keles : MonoBehaviour
 {
+    Animator animator;
+
+    [Header("Ayarlar")]
     public bool atesEdebilirmi;
     float İceridenAtesEtmeSikligi;
     public float disaridanAtesEtmeSikligi;
     public float menzil;
-    public Camera benimCam;
+    [Header("Sesler")]
     public AudioSource AtesSesi;
     public AudioSource SarjorSesi;
+    [Header("Efektler")]
     public ParticleSystem AtesEfekt;
     public ParticleSystem mermiIzi;
     public ParticleSystem kanEfekti;
-    Animator animator;
+    [Header("Digerleri")]
+    public Camera benimCam;
+    [Header("Sİlah Ayarları")]
+    public int toplamMermiSayisi;
+    public int SarjorKapasitesi;
+    public int kalanMermi;
+    public TextMeshProUGUI toplamMermi_Text;
+    public TextMeshProUGUI kalanMermi_Text;
+
     void Start()
     {
+        toplamMermi_Text.text = toplamMermiSayisi.ToString();
+        kalanMermi_Text.text = kalanMermi.ToString();
+
         animator = GetComponent<Animator>();
     }
 
@@ -24,7 +40,7 @@ public class keles : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKey(KeyCode.Mouse0) && atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi)
+        if (Input.GetKey(KeyCode.Mouse0) && atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi!=0)
         {
             AtesEt();
             İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
@@ -44,6 +60,9 @@ public class keles : MonoBehaviour
 
     void AtesEt()
     {
+        kalanMermi--;
+        kalanMermi_Text.text=kalanMermi.ToString();
+
         animator.Play("AtesEt");
         AtesSesi.Play();
         AtesEfekt.Play();
