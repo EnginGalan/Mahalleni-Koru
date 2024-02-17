@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class keles : MonoBehaviour
@@ -16,6 +17,7 @@ public class keles : MonoBehaviour
     public AudioSource AtesSesi;
     public AudioSource SarjorSesi;
     public AudioSource MermiBitisSesi;
+    public AudioSource MermiAlmaSesi;
     [Header("Efektler")]
     public ParticleSystem AtesEfekt;
     public ParticleSystem mermiIzi;
@@ -31,7 +33,7 @@ public class keles : MonoBehaviour
 
     public bool kovanCiksinMi;
     public GameObject kovanCikisNoktasi;
-    public GameObject kovanObjesi;  
+    public GameObject kovanObjesi;
     void Start()
     {
         kalanMermi = SarjorKapasitesi;
@@ -54,17 +56,31 @@ public class keles : MonoBehaviour
             }
             if (kalanMermi == 0)
             {
-                if(!MermiBitisSesi.isPlaying)
+                if (!MermiBitisSesi.isPlaying)
                     MermiBitisSesi.Play();
             }
         }
 
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             StartCoroutine(ReloadYap());
         }
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            MermiAl();
+        }
     }
-     IEnumerator ReloadYap()
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Mermi"))
+        {
+            MermiKaydet(other.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, other.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
+            Destroy(other.transform.gameObject);
+        }
+    }
+    IEnumerator ReloadYap()
     {
         if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
             animator.Play("SarjorDegistirme");
@@ -79,7 +95,7 @@ public class keles : MonoBehaviour
             {
                 SarjorDoldurmaTeknikFonksiyon("MermiYok");
             }
-            
+
         }
     }
 
@@ -112,6 +128,18 @@ public class keles : MonoBehaviour
         }
 
 
+    }
+    void MermiAl()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(benimCam.transform.position, benimCam.transform.forward, out hit, 4))
+        {
+            if (hit.transform.gameObject.CompareTag("Mermi"))
+            {
+                MermiKaydet(hit.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, hit.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
+                Destroy(hit.transform.gameObject);
+            }
+        }
     }
     void SarjorDoldurmaTeknikFonksiyon(string tur)
     {
@@ -177,5 +205,28 @@ public class keles : MonoBehaviour
         animator.Play("AtesEt");
         AtesSesi.Play();
         AtesEfekt.Play();
+    }
+    void MermiKaydet(string silahTuru, int mermiSayisi)
+    {
+        MermiAlmaSesi.Play();
+        switch (silahTuru)
+        {
+            case "Taramali":
+                toplamMermiSayisi += mermiSayisi;
+                SarjorDoldurmaTeknikFonksiyon("NormalYaz");
+                break;
+
+            case "Pompali":
+
+                break;
+
+            case "Magnum":
+
+                break;
+
+            case "Sniper":
+
+                break;
+        }
     }
 }
