@@ -40,7 +40,6 @@ public class keles : MonoBehaviour
 
         SarjorDoldurmaTeknikFonksiyon("NormalYaz");
 
-
         animator = GetComponent<Animator>();
     }
 
@@ -77,6 +76,7 @@ public class keles : MonoBehaviour
         if (other.gameObject.CompareTag("Mermi"))
         {
             MermiKaydet(other.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, other.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
+            MermiKutusuOlustur.mermiKutusuVarMi = false;
             Destroy(other.transform.gameObject);
         }
     }
@@ -137,6 +137,7 @@ public class keles : MonoBehaviour
             if (hit.transform.gameObject.CompareTag("Mermi"))
             {
                 MermiKaydet(hit.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, hit.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
+                MermiKutusuOlustur.mermiKutusuVarMi = false;
                 Destroy(hit.transform.gameObject);
             }
         }

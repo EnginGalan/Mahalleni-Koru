@@ -1,7 +1,9 @@
+using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NewBehaviourScript : MonoBehaviour
 {
@@ -140,4 +142,28 @@ public class NewBehaviourScript : MonoBehaviour
                 Debug.Log(hit.transform.name);
         }
     }
+    int[] mermiSayisi =
+    {
+        10,
+        20,
+        30,
+        40
+    };
+    string[] silahTurleri =
+    {
+        "pompali",
+        "taramali",
+        "sniper",
+        "magnum"
+    };
+    public int olusanMermiSayisi;
+    public List<Sprite> silahResimleri = new();
+    public Image silah;
+    void basla()
+    {
+        int gelenAnahtar=Random.Range(0,silahTurleri.Length);
+        silah.sprite = silahResimleri[gelenAnahtar];
+        
+    }
 }
+
