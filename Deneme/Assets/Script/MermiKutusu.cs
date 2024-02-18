@@ -17,11 +17,12 @@ public class MermiKutusu : MonoBehaviour
             10,
             20,
             5,
-            30
+            60
         };
     public List<Sprite> silahResimleri = new();
-    public Image silahResmi;   
+    public Image silahResmi;
 
+    public int noktasi;
     public string olusanSilahinTuru;
     public int olusanMermiSayisi;
     // Start is called before the first frame update
@@ -29,7 +30,7 @@ public class MermiKutusu : MonoBehaviour
     {
         int gelenAnahtar = Random.Range(0, silahlar.Length);
         olusanSilahinTuru = silahlar[gelenAnahtar];
-        olusanMermiSayisi = mermiSayisi[Random.Range(0, silahlar.Length)];
+        olusanMermiSayisi = mermiSayisi[Random.Range(0, mermiSayisi.Length)];
         silahResmi.sprite = silahResimleri[gelenAnahtar];
         /*
         olusanSilahinTuru = "Taramali";

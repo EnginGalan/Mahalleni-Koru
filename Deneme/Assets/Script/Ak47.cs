@@ -4,7 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class keles : MonoBehaviour
+public class Ak47 : MonoBehaviour
 {
     Animator animator;
 
@@ -34,6 +34,8 @@ public class keles : MonoBehaviour
     public bool kovanCiksinMi;
     public GameObject kovanCikisNoktasi;
     public GameObject kovanObjesi;
+
+    public MermiKutusuOlustur mermiKutusuOlustur;
     void Start()
     {
         kalanMermi = SarjorKapasitesi;
@@ -76,7 +78,7 @@ public class keles : MonoBehaviour
         if (other.gameObject.CompareTag("Mermi"))
         {
             MermiKaydet(other.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, other.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
-            MermiKutusuOlustur.mermiKutusuVarMi = false;
+            mermiKutusuOlustur.NoktalariKaldir(other.transform.gameObject.GetComponent<MermiKutusu>().noktasi);
             Destroy(other.transform.gameObject);
         }
     }
@@ -137,7 +139,7 @@ public class keles : MonoBehaviour
             if (hit.transform.gameObject.CompareTag("Mermi"))
             {
                 MermiKaydet(hit.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, hit.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
-                MermiKutusuOlustur.mermiKutusuVarMi = false;
+                mermiKutusuOlustur.NoktalariKaldir(hit.transform.gameObject.GetComponent<MermiKutusu>().noktasi);
                 Destroy(hit.transform.gameObject);
             }
         }
