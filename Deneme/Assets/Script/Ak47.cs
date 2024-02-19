@@ -25,9 +25,10 @@ public class Ak47 : MonoBehaviour
     [Header("Digerleri")]
     public Camera benimCam;
     [Header("Sİlah Ayarları")]
-    public int toplamMermiSayisi;
+    public string silahinAdi;
+    int toplamMermiSayisi;
     public int SarjorKapasitesi;
-    public int kalanMermi;
+    int kalanMermi;
     public TextMeshProUGUI toplamMermi_Text;
     public TextMeshProUGUI kalanMermi_Text;
 
@@ -38,10 +39,11 @@ public class Ak47 : MonoBehaviour
     public MermiKutusuOlustur mermiKutusuOlustur;
     void Start()
     {
-        kalanMermi = SarjorKapasitesi;
-
+        toplamMermiSayisi = PlayerPrefs.GetInt(silahinAdi + "Mermi");
+        kalanMermi = PlayerPrefs.GetInt("kalanMermi");
+        kovanCiksinMi = true;
+        BaslangicMermiDoldur();
         SarjorDoldurmaTeknikFonksiyon("NormalYaz");
-
         animator = GetComponent<Animator>();
     }
 
@@ -144,6 +146,35 @@ public class Ak47 : MonoBehaviour
             }
         }
     }
+    void BaslangicMermiDoldur()
+    {
+        if (toplamMermiSayisi <= SarjorKapasitesi)
+        {
+            int olusanToplamDeger = toplamMermiSayisi + kalanMermi;
+            if (olusanToplamDeger > SarjorKapasitesi)
+            {
+                kalanMermi = SarjorKapasitesi;
+                PlayerPrefs.SetInt("kalanMermi", kalanMermi);
+                toplamMermiSayisi = olusanToplamDeger - SarjorKapasitesi;
+                PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
+            }
+            else
+            {
+                kalanMermi += toplamMermiSayisi;
+                PlayerPrefs.SetInt("kalanMermi", kalanMermi);
+                toplamMermiSayisi = 0;
+                PlayerPrefs.SetInt(silahinAdi + "Mermi", 0);
+            }
+            
+        }
+        else
+        {
+            toplamMermiSayisi -= SarjorKapasitesi - kalanMermi;
+            kalanMermi = SarjorKapasitesi;
+            PlayerPrefs.SetInt("kalanMermi", kalanMermi);
+            PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
+        }
+    }
     void SarjorDoldurmaTeknikFonksiyon(string tur)
     {
         switch (tur)
@@ -155,18 +186,26 @@ public class Ak47 : MonoBehaviour
                     if (olusanToplamDeger > SarjorKapasitesi)
                     {
                         kalanMermi = SarjorKapasitesi;
+                        PlayerPrefs.SetInt("kalanMermi", kalanMermi);
                         toplamMermiSayisi = olusanToplamDeger - SarjorKapasitesi;
+                        PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
                     }
                     else
                     {
                         kalanMermi += toplamMermiSayisi;
+                        PlayerPrefs.SetInt("kalanMermi", kalanMermi);
                         toplamMermiSayisi = 0;
+                        PlayerPrefs.SetInt(silahinAdi + "Mermi", 0);
+
                     }
                 }
                 else
                 {
                     toplamMermiSayisi -= SarjorKapasitesi - kalanMermi;
                     kalanMermi = SarjorKapasitesi;
+                    PlayerPrefs.SetInt("kalanMermi", kalanMermi);
+                    PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
+
                 }
                 toplamMermi_Text.text = toplamMermiSayisi.ToString();
                 kalanMermi_Text.text = kalanMermi.ToString();
@@ -177,11 +216,16 @@ public class Ak47 : MonoBehaviour
                 {
                     kalanMermi = toplamMermiSayisi;
                     toplamMermiSayisi = 0;
+                    PlayerPrefs.SetInt("kalanMermi",kalanMermi);
+                    PlayerPrefs.SetInt(silahinAdi + "Mermi", 0);
+
                 }
                 else
                 {
                     toplamMermiSayisi -= SarjorKapasitesi;
                     kalanMermi = SarjorKapasitesi;
+                    PlayerPrefs.SetInt("kalanMermi", kalanMermi);
+                    PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
                 }
                 toplamMermi_Text.text = toplamMermiSayisi.ToString();
                 kalanMermi_Text.text = kalanMermi.ToString();
@@ -216,19 +260,20 @@ public class Ak47 : MonoBehaviour
         {
             case "Taramali":
                 toplamMermiSayisi += mermiSayisi;
+                PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
                 SarjorDoldurmaTeknikFonksiyon("NormalYaz");
                 break;
 
             case "Pompali":
-
+                PlayerPrefs.SetInt("pompaliMermi", PlayerPrefs.GetInt("pompaliMermi") + mermiSayisi);
                 break;
 
             case "Magnum":
-
+                PlayerPrefs.SetInt("magnumMermi", PlayerPrefs.GetInt("magnumMermi") + mermiSayisi);
                 break;
 
             case "Sniper":
-
+                PlayerPrefs.SetInt("sniperMermi", PlayerPrefs.GetInt("sniperMermi") + mermiSayisi);
                 break;
         }
     }
