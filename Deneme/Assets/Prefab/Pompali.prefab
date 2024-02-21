@@ -228,7 +228,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5603777176888046334}
   m_Layer: 0
-  m_Name: model
+  m_Name: Pompali
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

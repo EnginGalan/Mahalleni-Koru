@@ -4,7 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Ak47 : MonoBehaviour
+public class Magnum : MonoBehaviour
 {
     Animator animator;
 
@@ -24,8 +24,6 @@ public class Ak47 : MonoBehaviour
     public ParticleSystem kanEfekti;
     [Header("Digerleri")]
     public Camera benimCam;
-    float camFieldPov;
-    public float yaklasmaPov;
     [Header("Sİlah Ayarları")]
     public string silahinAdi;
     int toplamMermiSayisi;
@@ -33,7 +31,6 @@ public class Ak47 : MonoBehaviour
     int kalanMermi;
     public TextMeshProUGUI toplamMermi_Text;
     public TextMeshProUGUI kalanMermi_Text;
-    bool zoomVarMi;
 
     public bool kovanCiksinMi;
     public GameObject kovanCikisNoktasi;
@@ -44,21 +41,20 @@ public class Ak47 : MonoBehaviour
     {
         toplamMermiSayisi = PlayerPrefs.GetInt(silahinAdi + "Mermi");
         kalanMermi = PlayerPrefs.GetInt("kalanMermi");
-        kovanCiksinMi = true;
+        kovanCiksinMi = false;
         BaslangicMermiDoldur();
         SarjorDoldurmaTeknikFonksiyon("NormalYaz");
         animator = GetComponent<Animator>();
-        camFieldPov = benimCam.fieldOfView;
     }
 
     void Update()
     {
 
-        if (Input.GetKey(KeyCode.Mouse0) && !Input.GetKey(KeyCode.Mouse1))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
             if (atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi != 0)
             {
-                AtesEt(false);
+                AtesEt();
                 İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
             }
             if (kalanMermi == 0)
@@ -77,44 +73,8 @@ public class Ak47 : MonoBehaviour
         {
             MermiAl();
         }
-
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            zoomVarMi = true;
-            animator.SetBool("zoom", true);
-        }
-
-        if (Input.GetKeyUp(KeyCode.Mouse1))
-        {
-            zoomVarMi = false;
-            animator.SetBool("zoom", false);
-            benimCam.fieldOfView = camFieldPov;
-        }
-
-        if (zoomVarMi)
-        {
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                if (atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi != 0)
-                {
-                    AtesEt(true);
-                    İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
-                }
-                if (kalanMermi == 0)
-                {
-                    if (!MermiBitisSesi.isPlaying)
-                        MermiBitisSesi.Play();
-                }
-            }
-            
-        }
     }
-    
 
-    void Zoom()
-    {
-        benimCam.fieldOfView = yaklasmaPov;
-    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Mermi"))
@@ -126,9 +86,10 @@ public class Ak47 : MonoBehaviour
     }
     IEnumerator ReloadYap()
     {
+        atesEdebilirmi = false;
         if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
             animator.Play("SarjorDegistirme");
-        yield return new WaitForSeconds(1.8f);
+        yield return new WaitForSeconds(1.4f);
         if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
         {
             if (kalanMermi != 0)
@@ -141,6 +102,7 @@ public class Ak47 : MonoBehaviour
             }
 
         }
+        atesEdebilirmi = true;
     }
 
     void SarjorDegistirme()
@@ -149,9 +111,9 @@ public class Ak47 : MonoBehaviour
 
     }
 
-    void AtesEt(bool yakinlasmaVarMi)
+    void AtesEt()
     {
-        AtesEtmeTeknikİslemleri(yakinlasmaVarMi);
+        AtesEtmeTeknikİslemleri();
 
         RaycastHit hit;
 
@@ -168,7 +130,10 @@ public class Ak47 : MonoBehaviour
             else
                 Instantiate(mermiIzi, hit.point, Quaternion.LookRotation(hit.normal));
 
+            Debug.Log(hit.transform.name);
         }
+
+
     }
     void MermiAl()
     {
@@ -274,7 +239,7 @@ public class Ak47 : MonoBehaviour
                 break;
         }
     }
-    void AtesEtmeTeknikİslemleri(bool yakinlasmaVarMi)
+    void AtesEtmeTeknikİslemleri()
     {
         if (kovanCiksinMi)
         {
@@ -286,8 +251,7 @@ public class Ak47 : MonoBehaviour
         kalanMermi--;
         kalanMermi_Text.text = kalanMermi.ToString();
 
-        if(!yakinlasmaVarMi)
-            animator.Play("AtesEt");
+        animator.Play("AtesEt");
         AtesSesi.Play();
         AtesEfekt.Play();
     }
@@ -297,9 +261,7 @@ public class Ak47 : MonoBehaviour
         switch (silahTuru)
         {
             case "Taramali":
-                toplamMermiSayisi += mermiSayisi;
-                PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
-                SarjorDoldurmaTeknikFonksiyon("NormalYaz");
+                PlayerPrefs.SetInt("taramaliMermi", PlayerPrefs.GetInt("taramaliMermi") + mermiSayisi);
                 break;
 
             case "Pompali":
@@ -307,7 +269,9 @@ public class Ak47 : MonoBehaviour
                 break;
 
             case "Magnum":
-                PlayerPrefs.SetInt("magnumMermi", PlayerPrefs.GetInt("magnumMermi") + mermiSayisi);
+                toplamMermiSayisi += mermiSayisi;
+                PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
+                SarjorDoldurmaTeknikFonksiyon("NormalYaz");
                 break;
 
             case "Sniper":
