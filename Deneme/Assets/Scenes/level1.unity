@@ -14656,7 +14656,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &634566046
 Transform:
   m_ObjectHideFlags: 0
@@ -15130,6 +15130,7 @@ MonoBehaviour:
   mermiIzi: {fileID: 1088546878578059482, guid: e9216783460d15f4aad7823997868c63, type: 3}
   kanEfekti: {fileID: 4826331845018425068, guid: 6a244322184b9274ba358f7fd19ccddc, type: 3}
   benimCam: {fileID: 101199223}
+  yaklasmaPov: 40
   silahinAdi: pompali
   SarjorKapasitesi: 2
   toplamMermi_Text: {fileID: 569399743}
@@ -16438,14 +16439,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 744420695}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5435662, y: 0.8276257, z: 0.06737868, w: 0.12260344}
-  m_LocalPosition: {x: 0.016031291, y: -0.019338109, z: 0.13957605}
+  m_LocalRotation: {x: 0.66743547, y: 0.7314085, z: 0.08589337, w: 0.11042562}
+  m_LocalPosition: {x: 0.02161, y: -0.01562, z: 0.13934}
   m_LocalScale: {x: 1, y: 1, z: 1.0000001}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1896398220}
   m_Father: {fileID: 692088324}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 1.247, y: 163.963, z: 84.587}
 --- !u!1 &746292978
 GameObject:
   m_ObjectHideFlags: 0
@@ -16619,7 +16620,7 @@ Transform:
   m_GameObject: {fileID: 756334234}
   serializedVersion: 2
   m_LocalRotation: {x: 0.4035968, y: 0.44102877, z: -0.4242589, w: 0.6801527}
-  m_LocalPosition: {x: 0.0023092504, y: -0.0026749969, z: 0.14294526}
+  m_LocalPosition: {x: 0.00791, y: 0.00108, z: 0.14274}
   m_LocalScale: {x: 0.9999997, y: 0.99999994, z: 0.99999976}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20826,14 +20827,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300834116}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2950665, y: 0.7179751, z: 0.4448804, w: 0.44668663}
-  m_LocalPosition: {x: -0.0015784686, y: 0.0044417195, z: 0.0016311532}
+  m_LocalRotation: {x: 0.21126865, y: 0.6278083, z: 0.56503415, w: 0.49189302}
+  m_LocalPosition: {x: -0.0015782474, y: 0.004441501, z: 0.001630954}
   m_LocalScale: {x: 0.9999999, y: 0.99999976, z: 0.9999998}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 493101428}
   m_Father: {fileID: 1896398220}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -30.107, y: 81.863, z: 71.66}
 --- !u!1 &1320696958
 GameObject:
   m_ObjectHideFlags: 0
@@ -36941,7 +36942,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7425872423879137614
 Transform:
   m_ObjectHideFlags: 0

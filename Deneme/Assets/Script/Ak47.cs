@@ -26,6 +26,7 @@ public class Ak47 : MonoBehaviour
     public Camera benimCam;
     float camFieldPov;
     public float yaklasmaPov;
+    bool zoomVarMi;
     [Header("Sİlah Ayarları")]
     public string silahinAdi;
     int toplamMermiSayisi;
@@ -33,7 +34,6 @@ public class Ak47 : MonoBehaviour
     int kalanMermi;
     public TextMeshProUGUI toplamMermi_Text;
     public TextMeshProUGUI kalanMermi_Text;
-    bool zoomVarMi;
 
     public bool kovanCiksinMi;
     public GameObject kovanCikisNoktasi;
@@ -286,8 +286,10 @@ public class Ak47 : MonoBehaviour
         kalanMermi--;
         kalanMermi_Text.text = kalanMermi.ToString();
 
-        if(!yakinlasmaVarMi)
+        if (!yakinlasmaVarMi)
             animator.Play("AtesEt");
+        else
+            animator.Play("ZoomAtesEt");
         AtesSesi.Play();
         AtesEfekt.Play();
     }
