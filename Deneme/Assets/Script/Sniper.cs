@@ -13,7 +13,6 @@ public class Sniper : MonoBehaviour
     float İceridenAtesEtmeSikligi;
     public float disaridanAtesEtmeSikligi;
     public float menzil;
-    public bool sarjorDegistirebilirMi;
     public GameObject Cross;
     public GameObject Scope;
     [Header("Sesler")]
@@ -60,7 +59,7 @@ public class Sniper : MonoBehaviour
         {
             if (atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi != 0)
             {
-                StartCoroutine(AtesEt());
+                AtesEt();
                 İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
             }
             if (kalanMermi == 0)
@@ -70,7 +69,7 @@ public class Sniper : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R)&& sarjorDegistirebilirMi)
+        if (Input.GetKeyDown(KeyCode.R))
         {
             StartCoroutine(ReloadYap());
         }
@@ -120,10 +119,14 @@ public class Sniper : MonoBehaviour
     }
     IEnumerator ReloadYap()
     {
-        atesEdebilirmi = false;
         if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
             animator.Play("SarjorDegistirme");
         yield return new WaitForSeconds(1.2f);
+    }
+
+    void SarjorDegistirme()
+    {
+        SarjorSesi.Play();
         if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
         {
             if (kalanMermi != 0)
@@ -136,18 +139,10 @@ public class Sniper : MonoBehaviour
             }
 
         }
-        atesEdebilirmi = true;
     }
 
-    void SarjorDegistirme()
+    void AtesEt()
     {
-        SarjorSesi.Play();
-
-    }
-
-    IEnumerator AtesEt()
-    {
-        sarjorDegistirebilirMi = false;
         AtesEtmeTeknikİslemleri();
         RaycastHit hit;
 
@@ -165,8 +160,6 @@ public class Sniper : MonoBehaviour
                 Instantiate(mermiIzi, hit.point, Quaternion.LookRotation(hit.normal));
 
         }
-        yield return new WaitForSeconds(1.3f);
-        sarjorDegistirebilirMi=true;
     }
     void MermiAl()
     {

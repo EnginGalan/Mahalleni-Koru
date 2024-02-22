@@ -13,6 +13,7 @@ public class Ak47 : MonoBehaviour
     float İceridenAtesEtmeSikligi;
     public float disaridanAtesEtmeSikligi;
     public float menzil;
+    public GameObject Cross;
     [Header("Sesler")]
     public AudioSource AtesSesi;
     public AudioSource SarjorSesi;
@@ -43,6 +44,7 @@ public class Ak47 : MonoBehaviour
     void Start()
     {
         toplamMermiSayisi = PlayerPrefs.GetInt(silahinAdi + "Mermi");
+        PlayerPrefs.SetInt("kalanMermi", SarjorKapasitesi);
         kalanMermi = PlayerPrefs.GetInt("kalanMermi");
         kovanCiksinMi = true;
         BaslangicMermiDoldur();
@@ -87,6 +89,7 @@ public class Ak47 : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Mouse1))
         {
             zoomVarMi = false;
+            Cross.SetActive(true);
             animator.SetBool("zoom", false);
             benimCam.fieldOfView = camFieldPov;
         }
@@ -114,6 +117,7 @@ public class Ak47 : MonoBehaviour
     void Zoom()
     {
         benimCam.fieldOfView = yaklasmaPov;
+        Cross.SetActive(false);
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -284,6 +288,7 @@ public class Ak47 : MonoBehaviour
         }
 
         kalanMermi--;
+        PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi - SarjorKapasitesi + kalanMermi);
         kalanMermi_Text.text = kalanMermi.ToString();
 
         if (!yakinlasmaVarMi)

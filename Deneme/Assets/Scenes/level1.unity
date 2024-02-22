@@ -14656,7 +14656,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &634566046
 Transform:
   m_ObjectHideFlags: 0
@@ -22767,6 +22767,7 @@ MonoBehaviour:
   atesEdebilirmi: 1
   disaridanAtesEtmeSikligi: 0.7
   menzil: 200
+  Cross: {fileID: 311936639}
   AtesSesi: {fileID: 1505199247}
   SarjorSesi: {fileID: 1505199246}
   MermiBitisSesi: {fileID: 1505199245}
@@ -22775,6 +22776,7 @@ MonoBehaviour:
   mermiIzi: {fileID: 1088546878578059482, guid: e9216783460d15f4aad7823997868c63, type: 3}
   kanEfekti: {fileID: 4826331845018425068, guid: 6a244322184b9274ba358f7fd19ccddc, type: 3}
   benimCam: {fileID: 101199223}
+  yaklasmaPov: 40
   silahinAdi: magnum
   SarjorKapasitesi: 9
   toplamMermi_Text: {fileID: 569399743}
@@ -24767,7 +24769,6 @@ MonoBehaviour:
   atesEdebilirmi: 1
   disaridanAtesEtmeSikligi: 1.35
   menzil: 250
-  sarjorDegistirebilirMi: 0
   Cross: {fileID: 311936639}
   Scope: {fileID: 268163009}
   AtesSesi: {fileID: 1695775704}
@@ -28379,6 +28380,7 @@ MonoBehaviour:
   atesEdebilirmi: 1
   disaridanAtesEtmeSikligi: 0.1
   menzil: 200
+  Cross: {fileID: 311936639}
   AtesSesi: {fileID: 6719170176156281013}
   SarjorSesi: {fileID: 1283360929932404999}
   MermiBitisSesi: {fileID: 5158482608857327666}
@@ -36942,7 +36944,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7425872423879137614
 Transform:
   m_ObjectHideFlags: 0
