@@ -43,6 +43,7 @@ public class Pompali : MonoBehaviour
     void Start()
     {
         toplamMermiSayisi = PlayerPrefs.GetInt(silahinAdi + "Mermi");
+        PlayerPrefs.SetInt("kalanMermi", SarjorKapasitesi);
         kalanMermi = PlayerPrefs.GetInt("kalanMermi");
         kovanCiksinMi = false;
         BaslangicMermiDoldur();
@@ -70,7 +71,8 @@ public class Pompali : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            StartCoroutine(ReloadYap());
+            if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
+                animator.Play("SarjorDegistirme");
         }
 
         if (Input.GetKey(KeyCode.E))
@@ -109,6 +111,20 @@ public class Pompali : MonoBehaviour
 
     }
 
+    IEnumerator KameraTitreme(float titremeSuresi,float magnitude)
+    {
+        Vector3 originalPozisyon = benimCam.transform.localPosition;
+        float gecenSure=0f;
+        while(gecenSure< titremeSuresi)
+        {
+            float x = Random.Range(-1f, 1)*magnitude;
+            benimCam.transform.localPosition = new Vector3(x, originalPozisyon.y, originalPozisyon.x);
+            Debug.Log(x);
+            gecenSure += Time.time;
+            yield return null;
+        }
+        benimCam.transform.localPosition = originalPozisyon;
+    }
     void Zoom()
     {
         benimCam.fieldOfView = yaklasmaPov;
@@ -122,11 +138,10 @@ public class Pompali : MonoBehaviour
             Destroy(other.transform.gameObject);
         }
     }
-    IEnumerator ReloadYap()
+
+    void SarjorDegistirme()
     {
-        if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
-            animator.Play("SarjorDegistirme");
-        yield return new WaitForSeconds(1.8f);
+        SarjorSesi.Play();
         if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
         {
             if (kalanMermi != 0)
@@ -137,14 +152,7 @@ public class Pompali : MonoBehaviour
             {
                 SarjorDoldurmaTeknikFonksiyon("MermiYok");
             }
-
         }
-    }
-
-    void SarjorDegistirme()
-    {
-        SarjorSesi.Play();
-
     }
 
     void AtesEt(bool yakinlasmaVarMi)
@@ -165,11 +173,8 @@ public class Pompali : MonoBehaviour
             }
             else
                 Instantiate(mermiIzi, hit.point, Quaternion.LookRotation(hit.normal));
-
-            Debug.Log(hit.transform.name);
-        }
-
-
+        } 
+        StartCoroutine(KameraTitreme(.1f, .4f));
     }
     void MermiAl()
     {
@@ -283,8 +288,8 @@ public class Pompali : MonoBehaviour
             Rigidbody rb = obje.GetComponent<Rigidbody>();
             rb.AddRelativeForce(new Vector3(-10f, 1, 0) * 60);
         }
-
         kalanMermi--;
+        PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi - SarjorKapasitesi + kalanMermi);
         kalanMermi_Text.text = kalanMermi.ToString();
 
         if (!yakinlasmaVarMi)

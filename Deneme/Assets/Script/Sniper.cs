@@ -44,7 +44,8 @@ public class Sniper : MonoBehaviour
     void Start()
     {
         toplamMermiSayisi = PlayerPrefs.GetInt(silahinAdi + "Mermi");
-        kalanMermi = PlayerPrefs.GetInt("kalanMermi");
+        PlayerPrefs.SetInt("kalanMermi", SarjorKapasitesi);
+        kalanMermi = PlayerPrefs.GetInt("kalanMermi"); 
         kovanCiksinMi = true;
         BaslangicMermiDoldur();
         SarjorDoldurmaTeknikFonksiyon("NormalYaz");
@@ -71,7 +72,8 @@ public class Sniper : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            StartCoroutine(ReloadYap());
+            if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
+                animator.Play("SarjorDegistirme");
         }
 
         if (Input.GetKey(KeyCode.E))
@@ -88,6 +90,20 @@ public class Sniper : MonoBehaviour
         {
             Zoom(false);
         }
+    }
+    IEnumerator KameraTitreme(float titremeSuresi, float magnitude)
+    {
+        Vector3 originalPozisyon = benimCam.transform.localPosition;
+        float gecenSure = 0f;
+        while (gecenSure < titremeSuresi)
+        {
+            float x = Random.Range(-1f, 1) * magnitude;
+            benimCam.transform.localPosition = new Vector3(x, originalPozisyon.y, originalPozisyon.x);
+            Debug.Log(x);
+            gecenSure += Time.time;
+            yield return null;
+        }
+        benimCam.transform.localPosition = originalPozisyon;
     }
     void Zoom(bool durum)
     {
@@ -116,12 +132,6 @@ public class Sniper : MonoBehaviour
             mermiKutusuOlustur.NoktalariKaldir(other.transform.gameObject.GetComponent<MermiKutusu>().noktasi);
             Destroy(other.transform.gameObject);
         }
-    }
-    IEnumerator ReloadYap()
-    {
-        if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
-            animator.Play("SarjorDegistirme");
-        yield return new WaitForSeconds(1.2f);
     }
 
     void SarjorDegistirme()
@@ -158,8 +168,8 @@ public class Sniper : MonoBehaviour
             }
             else
                 Instantiate(mermiIzi, hit.point, Quaternion.LookRotation(hit.normal));
-
         }
+        StartCoroutine(KameraTitreme(.1f, .2f));
     }
     void MermiAl()
     {
@@ -277,8 +287,8 @@ public class Sniper : MonoBehaviour
     void AtesEtmeTeknikİslemleri()
     {
         kalanMermi--;
+        PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi - SarjorKapasitesi + kalanMermi);
         kalanMermi_Text.text = kalanMermi.ToString();
-
         animator.Play("AtesEt");
         AtesSesi.Play();
         AtesEfekt.Play();

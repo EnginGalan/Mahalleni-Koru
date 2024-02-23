@@ -72,7 +72,8 @@ public class Ak47 : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            StartCoroutine(ReloadYap());
+            if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
+                animator.Play("SarjorDegistirme");
         }
 
         if (Input.GetKey(KeyCode.E))
@@ -112,8 +113,20 @@ public class Ak47 : MonoBehaviour
             
         }
     }
-    
-
+    IEnumerator KameraTitreme(float titremeSuresi, float magnitude)
+    {
+        Vector3 originalPozisyon = benimCam.transform.localPosition;
+        float gecenSure = 0f;
+        while (gecenSure < titremeSuresi)
+        {
+            float x = Random.Range(-1f, 1) * magnitude;
+            benimCam.transform.localPosition = new Vector3(x, originalPozisyon.y, originalPozisyon.x);
+            Debug.Log(x);
+            gecenSure += Time.time;
+            yield return null;
+        }
+        benimCam.transform.localPosition = originalPozisyon;
+    }
     void Zoom()
     {
         benimCam.fieldOfView = yaklasmaPov;
@@ -128,11 +141,11 @@ public class Ak47 : MonoBehaviour
             Destroy(other.transform.gameObject);
         }
     }
-    IEnumerator ReloadYap()
+    
+
+    void SarjorDegistirme()
     {
-        if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
-            animator.Play("SarjorDegistirme");
-        yield return new WaitForSeconds(1.8f);
+        SarjorSesi.Play();
         if (kalanMermi < SarjorKapasitesi && toplamMermiSayisi != 0)
         {
             if (kalanMermi != 0)
@@ -143,14 +156,7 @@ public class Ak47 : MonoBehaviour
             {
                 SarjorDoldurmaTeknikFonksiyon("MermiYok");
             }
-
         }
-    }
-
-    void SarjorDegistirme()
-    {
-        SarjorSesi.Play();
-
     }
 
     void AtesEt(bool yakinlasmaVarMi)
@@ -171,8 +177,8 @@ public class Ak47 : MonoBehaviour
             }
             else
                 Instantiate(mermiIzi, hit.point, Quaternion.LookRotation(hit.normal));
-
         }
+        StartCoroutine(KameraTitreme(.05f, .2f));
     }
     void MermiAl()
     {
@@ -286,7 +292,6 @@ public class Ak47 : MonoBehaviour
             Rigidbody rb = obje.GetComponent<Rigidbody>();
             rb.AddRelativeForce(new Vector3(-10f, 1, 0) * 60);
         }
-
         kalanMermi--;
         PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi - SarjorKapasitesi + kalanMermi);
         kalanMermi_Text.text = kalanMermi.ToString();
