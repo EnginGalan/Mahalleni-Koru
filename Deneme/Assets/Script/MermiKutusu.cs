@@ -32,9 +32,6 @@ public class MermiKutusu : MonoBehaviour
         olusanSilahinTuru = silahlar[gelenAnahtar];
         olusanMermiSayisi = mermiSayisi[Random.Range(0, mermiSayisi.Length)];
         silahResmi.sprite = silahResimleri[gelenAnahtar];
-        /*
-        olusanSilahinTuru = "Taramali";
-        olusanMermiSayisi = 30;*/
     }
     
 

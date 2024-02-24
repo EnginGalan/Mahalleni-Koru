@@ -4,7 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Pompali : MonoBehaviour
+public class Sniper : MonoBehaviour
 {
     Animator animator;
 
@@ -13,6 +13,8 @@ public class Pompali : MonoBehaviour
     float İceridenAtesEtmeSikligi;
     public float disaridanAtesEtmeSikligi;
     public float menzil;
+    public GameObject Cross;
+    public GameObject Scope;
     [Header("Sesler")]
     public AudioSource AtesSesi;
     public AudioSource SarjorSesi;
@@ -26,7 +28,6 @@ public class Pompali : MonoBehaviour
     public Camera benimCam;
     float camFieldPov;
     public float yaklasmaPov;
-    bool zoomVarMi;
     [Header("Sİlah Ayarları")]
     public string silahinAdi;
     int toplamMermiSayisi;
@@ -34,7 +35,7 @@ public class Pompali : MonoBehaviour
     int kalanMermi;
     public TextMeshProUGUI toplamMermi_Text;
     public TextMeshProUGUI kalanMermi_Text;
-
+    public float darbeGucu;
     public bool kovanCiksinMi;
     public GameObject kovanCikisNoktasi;
     public GameObject kovanObjesi;
@@ -44,8 +45,8 @@ public class Pompali : MonoBehaviour
     {
         toplamMermiSayisi = PlayerPrefs.GetInt(silahinAdi + "Mermi");
         PlayerPrefs.SetInt("kalanMermi", SarjorKapasitesi);
-        kalanMermi = PlayerPrefs.GetInt("kalanMermi");
-        kovanCiksinMi = false;
+        kalanMermi = PlayerPrefs.GetInt("kalanMermi"); 
+        kovanCiksinMi = true;
         BaslangicMermiDoldur();
         SarjorDoldurmaTeknikFonksiyon("NormalYaz");
         animator = GetComponent<Animator>();
@@ -55,11 +56,11 @@ public class Pompali : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKey(KeyCode.Mouse0)&& !Input.GetKey(KeyCode.Mouse1))
+        if (Input.GetKey(KeyCode.Mouse0))
         {
             if (atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi != 0)
             {
-                AtesEt(false);
+                AtesEt();
                 İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
             }
             if (kalanMermi == 0)
@@ -82,52 +83,45 @@ public class Pompali : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            zoomVarMi = true;
-            animator.SetBool("zoom", true);
+            Zoom(true);
         }
 
-        if(Input.GetKeyUp(KeyCode.Mouse1)) 
+        if (Input.GetKeyUp(KeyCode.Mouse1))
         {
-            zoomVarMi=false;
-            animator.SetBool("zoom", false);
-            benimCam.fieldOfView = camFieldPov;
+            Zoom(false);
         }
-        if (zoomVarMi)
-        {
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                if (atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi != 0)
-                {
-                    AtesEt(true);
-                    İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
-                }
-                if (kalanMermi == 0)
-                {
-                    if (!MermiBitisSesi.isPlaying)
-                        MermiBitisSesi.Play();
-                }
-            }
-        }
-
     }
-
-    IEnumerator KameraTitreme(float titremeSuresi,float magnitude)
+    IEnumerator KameraTitreme(float titremeSuresi, float magnitude)
     {
         Vector3 originalPozisyon = benimCam.transform.localPosition;
-        float gecenSure=0f;
-        while(gecenSure< titremeSuresi)
+        float gecenSure = 0f;
+        while (gecenSure < titremeSuresi)
         {
-            float x = Random.Range(-1f, 1)*magnitude;
+            float x = Random.Range(-1f, 1) * magnitude;
             benimCam.transform.localPosition = new Vector3(x, originalPozisyon.y, originalPozisyon.x);
-            Debug.Log(x);
             gecenSure += Time.time;
             yield return null;
         }
         benimCam.transform.localPosition = originalPozisyon;
     }
-    void Zoom()
+    void Zoom(bool durum)
     {
-        benimCam.fieldOfView = yaklasmaPov;
+        if (durum)
+        {
+            Cross.SetActive(false);
+            benimCam.cullingMask = ~(1 << 7);
+            animator.SetBool("zoom", durum);
+            benimCam.fieldOfView = yaklasmaPov;
+            Scope.SetActive(true);
+        }
+        else
+        {
+            Scope.SetActive(false);
+            benimCam.cullingMask = -1;
+            animator.SetBool("zoom", durum);
+            benimCam.fieldOfView = camFieldPov;
+            Cross.SetActive(true);
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -135,6 +129,13 @@ public class Pompali : MonoBehaviour
         {
             MermiKaydet(other.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, other.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
             mermiKutusuOlustur.NoktalariKaldir(other.transform.gameObject.GetComponent<MermiKutusu>().noktasi);
+            Destroy(other.transform.gameObject);
+        }
+
+        if (other.gameObject.CompareTag("CanKutusu"))
+        {
+            mermiKutusuOlustur.GetComponent<GameControl>().SaglikDoldur();
+            CanKutusuOlustur.canKutusuVarMi = false;
             Destroy(other.transform.gameObject);
         }
     }
@@ -152,19 +153,22 @@ public class Pompali : MonoBehaviour
             {
                 SarjorDoldurmaTeknikFonksiyon("MermiYok");
             }
+
         }
     }
 
-    void AtesEt(bool yakinlasmaVarMi)
+    void AtesEt()
     {
-        AtesEtmeTeknikİslemleri(yakinlasmaVarMi);
-
+        AtesEtmeTeknikİslemleri();
         RaycastHit hit;
 
         if (Physics.Raycast(benimCam.transform.position, benimCam.transform.forward, out hit, menzil))
         {
             if (hit.transform.gameObject.CompareTag("Dusman"))
+            {
                 Instantiate(kanEfekti, hit.point, Quaternion.LookRotation(hit.normal));
+                hit.transform.gameObject.GetComponent<Dusman>().DarbeAl(darbeGucu);
+            }
             else if (hit.transform.gameObject.CompareTag("DevrilebilirObje"))
             {
                 Rigidbody rg = hit.transform.GetComponent<Rigidbody>();
@@ -173,8 +177,8 @@ public class Pompali : MonoBehaviour
             }
             else
                 Instantiate(mermiIzi, hit.point, Quaternion.LookRotation(hit.normal));
-        } 
-        StartCoroutine(KameraTitreme(.1f, .4f));
+        }
+        StartCoroutine(KameraTitreme(.1f, .2f));
     }
     void MermiAl()
     {
@@ -280,22 +284,21 @@ public class Pompali : MonoBehaviour
                 break;
         }
     }
-    void AtesEtmeTeknikİslemleri(bool yakinlasmaVarMi)
+    void KovanCikartma()
     {
         if (kovanCiksinMi)
         {
             GameObject obje = Instantiate(kovanObjesi, kovanCikisNoktasi.transform.position, kovanCikisNoktasi.transform.rotation);
             Rigidbody rb = obje.GetComponent<Rigidbody>();
-            rb.AddRelativeForce(new Vector3(-10f, 1, 0) * 60);
+            rb.AddRelativeForce(new Vector3(-8f, 2, 0) * 30);
         }
+    }
+    void AtesEtmeTeknikİslemleri()
+    {
         kalanMermi--;
         PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi - SarjorKapasitesi + kalanMermi);
         kalanMermi_Text.text = kalanMermi.ToString();
-
-        if (!yakinlasmaVarMi)
-            animator.Play("AtesEt");
-        else
-            animator.Play("ZoomAtesEt");
+        animator.Play("AtesEt");
         AtesSesi.Play();
         AtesEfekt.Play();
     }
@@ -309,9 +312,7 @@ public class Pompali : MonoBehaviour
                 break;
 
             case "Pompali":
-                toplamMermiSayisi += mermiSayisi;
-                PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
-                SarjorDoldurmaTeknikFonksiyon("NormalYaz");
+                PlayerPrefs.SetInt("pompaliMermi", PlayerPrefs.GetInt("pompaliMermi") + mermiSayisi);
                 break;
 
             case "Magnum":
@@ -319,7 +320,9 @@ public class Pompali : MonoBehaviour
                 break;
 
             case "Sniper":
-                PlayerPrefs.SetInt("sniperMermi", PlayerPrefs.GetInt("sniperMermi") + mermiSayisi);
+                toplamMermiSayisi += mermiSayisi;
+                PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
+                SarjorDoldurmaTeknikFonksiyon("NormalYaz");
                 break;
         }
     }

@@ -4,7 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Sniper : MonoBehaviour
+public class Magnum : MonoBehaviour
 {
     Animator animator;
 
@@ -14,7 +14,6 @@ public class Sniper : MonoBehaviour
     public float disaridanAtesEtmeSikligi;
     public float menzil;
     public GameObject Cross;
-    public GameObject Scope;
     [Header("Sesler")]
     public AudioSource AtesSesi;
     public AudioSource SarjorSesi;
@@ -28,6 +27,7 @@ public class Sniper : MonoBehaviour
     public Camera benimCam;
     float camFieldPov;
     public float yaklasmaPov;
+    bool zoomVarMi;
     [Header("Sİlah Ayarları")]
     public string silahinAdi;
     int toplamMermiSayisi;
@@ -35,7 +35,7 @@ public class Sniper : MonoBehaviour
     int kalanMermi;
     public TextMeshProUGUI toplamMermi_Text;
     public TextMeshProUGUI kalanMermi_Text;
-
+    public float darbeGucu;
     public bool kovanCiksinMi;
     public GameObject kovanCikisNoktasi;
     public GameObject kovanObjesi;
@@ -45,8 +45,8 @@ public class Sniper : MonoBehaviour
     {
         toplamMermiSayisi = PlayerPrefs.GetInt(silahinAdi + "Mermi");
         PlayerPrefs.SetInt("kalanMermi", SarjorKapasitesi);
-        kalanMermi = PlayerPrefs.GetInt("kalanMermi"); 
-        kovanCiksinMi = true;
+        kalanMermi = PlayerPrefs.GetInt("kalanMermi");
+        kovanCiksinMi = false;
         BaslangicMermiDoldur();
         SarjorDoldurmaTeknikFonksiyon("NormalYaz");
         animator = GetComponent<Animator>();
@@ -56,11 +56,11 @@ public class Sniper : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0)&&!Input.GetKey(KeyCode.Mouse1))
         {
             if (atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi != 0)
             {
-                AtesEt();
+                AtesEt(false);
                 İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
             }
             if (kalanMermi == 0)
@@ -80,15 +80,36 @@ public class Sniper : MonoBehaviour
         {
             MermiAl();
         }
-
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            Zoom(true);
+            zoomVarMi = true;
+            animator.SetBool("zoom", true);
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse1))
         {
-            Zoom(false);
+            zoomVarMi = false;
+            Cross.SetActive(true);
+            animator.SetBool("zoom", false);
+            benimCam.fieldOfView = camFieldPov;
+        }
+
+        if (zoomVarMi)
+        {
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                if (atesEdebilirmi && Time.time > İceridenAtesEtmeSikligi && kalanMermi != 0)
+                {
+                    AtesEt(true);
+                    İceridenAtesEtmeSikligi = Time.time + disaridanAtesEtmeSikligi;
+                }
+                if (kalanMermi == 0)
+                {
+                    if (!MermiBitisSesi.isPlaying)
+                        MermiBitisSesi.Play();
+                }
+            }
+
         }
     }
     IEnumerator KameraTitreme(float titremeSuresi, float magnitude)
@@ -99,37 +120,30 @@ public class Sniper : MonoBehaviour
         {
             float x = Random.Range(-1f, 1) * magnitude;
             benimCam.transform.localPosition = new Vector3(x, originalPozisyon.y, originalPozisyon.x);
-            Debug.Log(x);
             gecenSure += Time.time;
             yield return null;
         }
         benimCam.transform.localPosition = originalPozisyon;
     }
-    void Zoom(bool durum)
+    void Zoom()
     {
-        if (durum)
-        {
-            Cross.SetActive(false);
-            benimCam.cullingMask = ~(1 << 7);
-            animator.SetBool("zoom", durum);
-            benimCam.fieldOfView = yaklasmaPov;
-            Scope.SetActive(true);
-        }
-        else
-        {
-            Scope.SetActive(false);
-            benimCam.cullingMask = -1;
-            animator.SetBool("zoom", durum);
-            benimCam.fieldOfView = camFieldPov;
-            Cross.SetActive(true);
-        }
+        benimCam.fieldOfView = yaklasmaPov;
+        Cross.SetActive(false);
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Mermi"))
         {
             MermiKaydet(other.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, other.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
             mermiKutusuOlustur.NoktalariKaldir(other.transform.gameObject.GetComponent<MermiKutusu>().noktasi);
+            Destroy(other.transform.gameObject);
+        }
+
+        if (other.gameObject.CompareTag("CanKutusu"))
+        {
+            mermiKutusuOlustur.GetComponent<GameControl>().SaglikDoldur();
+            CanKutusuOlustur.canKutusuVarMi = false;
             Destroy(other.transform.gameObject);
         }
     }
@@ -147,19 +161,22 @@ public class Sniper : MonoBehaviour
             {
                 SarjorDoldurmaTeknikFonksiyon("MermiYok");
             }
-
         }
     }
 
-    void AtesEt()
+    void AtesEt(bool yakinlasmaVarMi)
     {
-        AtesEtmeTeknikİslemleri();
+        AtesEtmeTeknikİslemleri(yakinlasmaVarMi);
+
         RaycastHit hit;
 
         if (Physics.Raycast(benimCam.transform.position, benimCam.transform.forward, out hit, menzil))
         {
             if (hit.transform.gameObject.CompareTag("Dusman"))
+            {
                 Instantiate(kanEfekti, hit.point, Quaternion.LookRotation(hit.normal));
+                hit.transform.gameObject.GetComponent<Dusman>().DarbeAl(darbeGucu);
+            }
             else if (hit.transform.gameObject.CompareTag("DevrilebilirObje"))
             {
                 Rigidbody rg = hit.transform.GetComponent<Rigidbody>();
@@ -169,7 +186,7 @@ public class Sniper : MonoBehaviour
             else
                 Instantiate(mermiIzi, hit.point, Quaternion.LookRotation(hit.normal));
         }
-        StartCoroutine(KameraTitreme(.1f, .2f));
+        StartCoroutine(KameraTitreme(.05f, .2f));
     }
     void MermiAl()
     {
@@ -275,21 +292,23 @@ public class Sniper : MonoBehaviour
                 break;
         }
     }
-    void KovanCikartma()
+    void AtesEtmeTeknikİslemleri(bool yakinlasmaVarMi)
     {
         if (kovanCiksinMi)
         {
             GameObject obje = Instantiate(kovanObjesi, kovanCikisNoktasi.transform.position, kovanCikisNoktasi.transform.rotation);
             Rigidbody rb = obje.GetComponent<Rigidbody>();
-            rb.AddRelativeForce(new Vector3(-8f, 2, 0) * 30);
+            rb.AddRelativeForce(new Vector3(-10f, 1, 0) * 60);
         }
-    }
-    void AtesEtmeTeknikİslemleri()
-    {
         kalanMermi--;
         PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi - SarjorKapasitesi + kalanMermi);
         kalanMermi_Text.text = kalanMermi.ToString();
-        animator.Play("AtesEt");
+
+        if (!yakinlasmaVarMi)
+            animator.Play("AtesEt");
+        else
+            animator.Play("ZoomAtesEt");
+
         AtesSesi.Play();
         AtesEfekt.Play();
     }
@@ -307,13 +326,13 @@ public class Sniper : MonoBehaviour
                 break;
 
             case "Magnum":
-                PlayerPrefs.SetInt("magnumMermi", PlayerPrefs.GetInt("magnumMermi") + mermiSayisi);
-                break;
-
-            case "Sniper":
                 toplamMermiSayisi += mermiSayisi;
                 PlayerPrefs.SetInt(silahinAdi + "Mermi", toplamMermiSayisi);
                 SarjorDoldurmaTeknikFonksiyon("NormalYaz");
+                break;
+
+            case "Sniper":
+                PlayerPrefs.SetInt("sniperMermi", PlayerPrefs.GetInt("sniperMermi") + mermiSayisi);
                 break;
         }
     }

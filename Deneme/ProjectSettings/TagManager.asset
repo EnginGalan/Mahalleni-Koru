@@ -8,6 +8,8 @@ TagManager:
   - DevrilebilirObje
   - Yol
   - Mermi
+  - Hedef
+  - CanKutusu
   layers:
   - Default
   - TransparentFX

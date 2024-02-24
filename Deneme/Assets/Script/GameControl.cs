@@ -1,12 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameControl : MonoBehaviour
 {
+    int aktifSira;
+    float health = 100;
+    [Header("SAÐLIK AYARLARI")]
+    public Image HealthBar;
+    [Header("SÝLAH AYARLARI")]
     public GameObject[] silahlar;
     public AudioSource degisimSesi;
-    int aktifSira;
+    [Header("DÜÞMAN AYARLARI")]
+    public GameObject[] Dusmanlar;
+    public GameObject[] CikisNoktalari;
+    public GameObject[] HedefNoktalar;
+    public float dusmanCikmaSuresi;
+    [Header("DÝÐER AYARLAR")]
+    public GameObject GameOverCanvas;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +31,8 @@ public class GameControl : MonoBehaviour
             PlayerPrefs.SetInt("sniperMermi", 70);
             PlayerPrefs.SetInt("kalanMermi", 30);
             PlayerPrefs.SetInt("oyunBasladiMi", 1);
-        }       
+        }
+        StartCoroutine(DusmanCikar());
     }
 
     // Update is called once per frame
@@ -47,6 +61,18 @@ public class GameControl : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Q))
         {
             QTusuVersiyonuSilahDegistir();
+        }
+    }
+    IEnumerator DusmanCikar()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(dusmanCikmaSuresi);
+            int dusman = Random.Range(0, 5);
+            int cikisNoktasi=Random.Range(0, 2);
+            int hedefNoktasi=Random.Range(0, 2);
+            GameObject Obje = Instantiate(Dusmanlar[dusman], CikisNoktalari[cikisNoktasi].transform.position, Quaternion.identity);
+            Obje.GetComponent<Dusman>().HedefBelirle(HedefNoktalar[hedefNoktasi]);
         }
     }
     void SilahDegistir(int siraNumarasi)
@@ -78,5 +104,30 @@ public class GameControl : MonoBehaviour
             aktifSira++;
             silahlar[aktifSira].SetActive(true);
         }
+    }
+    public void DarbeAl(float darbeGucu)
+    {
+        health-=darbeGucu;
+        HealthBar.fillAmount = health / 100;
+        if (health <= 0)
+        {
+            GameOver();
+        }
+    }
+
+    public void SaglikDoldur()
+    {
+        health = 100;
+        HealthBar.fillAmount= health / 100;
+    }
+    void GameOver()
+    {
+        GameOverCanvas.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void BastanBasla()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

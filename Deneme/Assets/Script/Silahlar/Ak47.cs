@@ -35,7 +35,7 @@ public class Ak47 : MonoBehaviour
     int kalanMermi;
     public TextMeshProUGUI toplamMermi_Text;
     public TextMeshProUGUI kalanMermi_Text;
-
+    public float darbeGucu;
     public bool kovanCiksinMi;
     public GameObject kovanCikisNoktasi;
     public GameObject kovanObjesi;
@@ -121,7 +121,6 @@ public class Ak47 : MonoBehaviour
         {
             float x = Random.Range(-1f, 1) * magnitude;
             benimCam.transform.localPosition = new Vector3(x, originalPozisyon.y, originalPozisyon.x);
-            Debug.Log(x);
             gecenSure += Time.time;
             yield return null;
         }
@@ -138,6 +137,13 @@ public class Ak47 : MonoBehaviour
         {
             MermiKaydet(other.transform.gameObject.GetComponent<MermiKutusu>().olusanSilahinTuru, other.transform.gameObject.GetComponent<MermiKutusu>().olusanMermiSayisi);
             mermiKutusuOlustur.NoktalariKaldir(other.transform.gameObject.GetComponent<MermiKutusu>().noktasi);
+            Destroy(other.transform.gameObject);
+        }
+
+        if (other.gameObject.CompareTag("CanKutusu"))
+        {
+            mermiKutusuOlustur.GetComponent<GameControl>().SaglikDoldur();
+            CanKutusuOlustur.canKutusuVarMi = false;
             Destroy(other.transform.gameObject);
         }
     }
@@ -168,7 +174,10 @@ public class Ak47 : MonoBehaviour
         if (Physics.Raycast(benimCam.transform.position, benimCam.transform.forward, out hit, menzil))
         {
             if (hit.transform.gameObject.CompareTag("Dusman"))
+            {
                 Instantiate(kanEfekti, hit.point, Quaternion.LookRotation(hit.normal));
+                hit.transform.gameObject.GetComponent<Dusman>().DarbeAl(darbeGucu);
+            }
             else if (hit.transform.gameObject.CompareTag("DevrilebilirObje"))
             {
                 Rigidbody rg = hit.transform.GetComponent<Rigidbody>();
