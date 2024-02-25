@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,11 +19,17 @@ public class GameControl : MonoBehaviour
     public GameObject[] CikisNoktalari;
     public GameObject[] HedefNoktalar;
     public float dusmanCikmaSuresi;
+    public int baslangicDusmanSayisi;
+    public static int kalanDusmanSayisi;
+    public TextMeshProUGUI kalanDusmanText;
     [Header("DÝÐER AYARLAR")]
     public GameObject GameOverCanvas;
+    public GameObject KazandinCanvas;
     // Start is called before the first frame update
     void Start()
     {
+        kalanDusmanText.text = baslangicDusmanSayisi.ToString();
+        kalanDusmanSayisi = baslangicDusmanSayisi;
         if (!PlayerPrefs.HasKey("oyunBasladiMi"))
         {
             PlayerPrefs.SetInt("taramaliMermi", 70);
@@ -68,12 +75,28 @@ public class GameControl : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(dusmanCikmaSuresi);
-            int dusman = Random.Range(0, 5);
-            int cikisNoktasi=Random.Range(0, 2);
-            int hedefNoktasi=Random.Range(0, 2);
-            GameObject Obje = Instantiate(Dusmanlar[dusman], CikisNoktalari[cikisNoktasi].transform.position, Quaternion.identity);
-            Obje.GetComponent<Dusman>().HedefBelirle(HedefNoktalar[hedefNoktasi]);
+            if (baslangicDusmanSayisi != 0)
+            {
+                int dusman = Random.Range(0, 5);
+                int cikisNoktasi = Random.Range(0, 2);
+                int hedefNoktasi = Random.Range(0, 2);
+                GameObject Obje = Instantiate(Dusmanlar[dusman], CikisNoktalari[cikisNoktasi].transform.position, Quaternion.identity);
+                Obje.GetComponent<Dusman>().HedefBelirle(HedefNoktalar[hedefNoktasi]);
+                baslangicDusmanSayisi--;
+            }
         }
+    }
+
+    public void DusmanSayisiGuncelle()
+    {
+        kalanDusmanSayisi--;
+        kalanDusmanText.text = kalanDusmanSayisi.ToString();
+        if (kalanDusmanSayisi == 0)
+        {
+            Kazandin();
+        }       
+        
+
     }
     void SilahDegistir(int siraNumarasi)
     {
@@ -120,6 +143,12 @@ public class GameControl : MonoBehaviour
         health = 100;
         HealthBar.fillAmount= health / 100;
     }
+
+    void Kazandin()
+    {
+        KazandinCanvas.SetActive(true);
+        Time.timeScale = 0;
+    }
     void GameOver()
     {
         GameOverCanvas.SetActive(true);
@@ -129,5 +158,6 @@ public class GameControl : MonoBehaviour
     public void BastanBasla()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Time.timeScale = 1;
     }
 }

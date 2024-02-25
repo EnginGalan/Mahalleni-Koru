@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  dusmanDarbeGucu: 40
+  dusmanDarbeGucu: 0
 --- !u!54 &-910152990968342481
 Rigidbody:
   m_ObjectHideFlags: 0

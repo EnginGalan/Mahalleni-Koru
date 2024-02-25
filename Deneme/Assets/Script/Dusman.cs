@@ -9,9 +9,10 @@ public class Dusman : MonoBehaviour
     GameObject Hedef;
     public float health;
     public float dusmanDarbeGucu;
+    GameObject anaKontrol;
     void Start()
     {
-        
+        anaKontrol = GameObject.FindWithTag("GameController");
         Ajan = GetComponent<NavMeshAgent>();
     }
 
@@ -35,12 +36,12 @@ public class Dusman : MonoBehaviour
     void Oldun()
     {
         Destroy(gameObject) ;
+        anaKontrol.GetComponent<GameControl>().DusmanSayisiGuncelle();
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Hedef"))
         {
-            GameObject anaKontrol = GameObject.FindWithTag ("GameController");
             anaKontrol.GetComponent<GameControl>().DarbeAl(dusmanDarbeGucu);
             Oldun();
         }
