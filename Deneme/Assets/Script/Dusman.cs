@@ -10,8 +10,10 @@ public class Dusman : MonoBehaviour
     public float health;
     public float dusmanDarbeGucu;
     GameObject anaKontrol;
+    Animator animator;
     void Start()
     {
+        animator = GetComponent<Animator>();
         anaKontrol = GameObject.FindWithTag("GameController");
         Ajan = GetComponent<NavMeshAgent>();
     }
@@ -35,7 +37,8 @@ public class Dusman : MonoBehaviour
     }
     void Oldun()
     {
-        Destroy(gameObject) ;
+        animator.SetTrigger("Olme");
+        Destroy(gameObject,5f) ;
         anaKontrol.GetComponent<GameControl>().DusmanSayisiGuncelle();
     }
     private void OnTriggerEnter(Collider other)

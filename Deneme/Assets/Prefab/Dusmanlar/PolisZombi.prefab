@@ -22,15 +22,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.9617127
+      value: 61.062225
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.048
+      value: 0.5014477
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 70.14271
+      value: 22.345917
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
       propertyPath: m_LocalRotation.w
@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 572617754110402786, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.006914
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
       propertyPath: m_Name
@@ -88,6 +88,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8235653854120201443}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8637683185574051275}
   m_SourcePrefab: {fileID: 100100000, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
 --- !u!1 &6924161708004204629 stripped
 GameObject:
@@ -114,12 +117,12 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 2
-  m_Radius: 0.5
+  m_Radius: 0.2
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &-7247621237457407395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,6 +183,28 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 1.03
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!95 &8637683185574051275
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6924161708004204629}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 27570cca3cddd4d438e3c513e65bb136, type: 3}
+  m_Controller: {fileID: 9100000, guid: d671efb9c3c220542bb8f06540ccea0b, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 1
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

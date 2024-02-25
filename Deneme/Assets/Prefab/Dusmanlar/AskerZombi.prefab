@@ -22,31 +22,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.1209323
+      value: 55.519897
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.042
+      value: 0.5014472
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 70.89625
+      value: 24.267214
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7070645
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.70714915
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90.007
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 572617754110402786, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.035534
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       propertyPath: m_Name
@@ -88,6 +88,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3266798188528773431}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5187691652851196336}
   m_SourcePrefab: {fileID: 100100000, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
 --- !u!1 &5702392284193251221 stripped
 GameObject:
@@ -154,7 +157,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 1.02
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!143 &3266798188528773431
@@ -176,10 +179,32 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 2.1
+  m_Radius: 0.25
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!95 &5187691652851196336
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5702392284193251221}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 8f71c1d6b6d04b14d9a31e1fca11d4c1, type: 3}
+  m_Controller: {fileID: 9100000, guid: d671efb9c3c220542bb8f06540ccea0b, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 1
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
